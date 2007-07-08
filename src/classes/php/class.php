@@ -26,7 +26,11 @@ class plPhpClass
 
     public function __set( $key, $val )
     {
-        throw new plBasePropertyException( $key, plBasePropertyException::WRITE );
+        if ( !array_key_exists( $key, $this->properties ) )
+        {
+            throw new plBasePropertyException( $key, plBasePropertyException::WRITE );
+        }
+        $this->properties[$key] = $val;            
     }
 }
 
