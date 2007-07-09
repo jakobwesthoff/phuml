@@ -29,8 +29,10 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
     {
         $this->class        = null;
         $this->interface    = null;
+        $this->function     = null;
         $this->variables    = array();
         $this->functions    = array();
+        $this->params       = array();
         $this->implements   = array();
         $this->extends      = null;
         $this->modifier     = 'public';
@@ -60,6 +62,11 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
                 {
                     continue;
                 }
+                // Skip opening brackets
+                else if ( is_array( $token ) !== true && $token === '(' ) 
+                {
+                    continue;
+                }
                 // New intial token of interest 
                 else if ( $this->lastToken === null && is_array( $token ) === true ) 
                 {
@@ -70,6 +77,21 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
                 {
                     $this->stringToken( $token );
                 } 
+                // T_Variable
+                else if ( is_array( $token ) === true && $token[0] === T_VARIABLE ) 
+                {
+                    $this->variableToken( $token );
+                }
+                // Closing bracket
+                else if ( is_array( $token ) !== true && $token === ')' ) 
+                {
+                    $this->closingBracket( $token );
+                }
+                // T_FUNCTION
+                else if ( is_array( $token ) === true && $token[0] === T_FUNCTION ) 
+                {
+                    $this->functionToken( $token );
+                }
                 // There is a new token we do not know and don't want to know
                 else 
                 {
@@ -105,7 +127,10 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             case T_PROTECTED:
             case T_PRIVATE:
                 $this->modifier  = $token[1];
-                $this->lastToken = null;
+                $this->lastToken = $token[0];
+            break;
+            case T_VAR:
+                $this->lastToken = $token[0];
             break;
             case T_FUNCTION:
                 $this->lastToken = $token[0];
@@ -130,11 +155,7 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             break;                        
             case T_FUNCTION:
                 // Add the current function
-                $this->functions[] = array( $token[1], $this->modifier );                           
-                // Reset the last token
-                $this->lastToken = null;
-                //Reset the modifier state
-                $this->modifier = 'public';
+                $this->function = $token[1];                           
             break;
             case T_CLASS:
                 // Set the class name
@@ -151,6 +172,55 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
         }
     }
 
+    private function variableToken( $token ) 
+    {
+        switch( $this->lastToken ) 
+        {
+            case T_PUBLIC:
+            case T_PROTECTED:
+            case T_PRIVATE:
+            case T_VAR:
+                $this->variables[] = new plPhpVariable( $token[1], $this->modifier );
+                $this->lastToken = null;
+                $this->modifier = 'public';
+            break;
+            case T_FUNCTION:
+                $this->params[] = new plPhpVariable( $token[1] );
+            break;
+        }
+    }
+
+    private function closingBracket( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // Add the current function
+                $this->functions[] = array( $this->function, $this->modifier, $this->params );                           
+                // Reset the last token
+                $this->lastToken = null;
+                //Reset the modifier state
+                $this->modifier = 'public';
+                // Reset the params array
+                $this->params = array();
+                // Reset the function name
+                $this->function = null;            
+            break;
+        }
+    }
+
+    private function functionToken( $token ) 
+    {
+        switch( $this->lastToken ) 
+        {
+            case T_PUBLIC:
+            case T_PROTECTED:
+            case T_PRIVATE:
+                $this->lastToken = $token[0];
+            break;
+        }
+    }
+
     private function storeClassOrInterface() 
     {
         // First we need to check if we should store interface data found so far
@@ -162,7 +232,7 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             // Create the data objects
             foreach( $this->functions as $function ) 
             {
-                $functions[] = new plPhpFunction( $function[0], $function[1] );                                    
+                $functions[] = new plPhpFunction( $function[0], $function[1], $function[2] );                                    
             }
             $interface = new plPhpInterface( $this->interface, $functions, $this->extends );                              
             
@@ -172,18 +242,13 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
         {
             // Init data storage
             $functions = array();
-            $variables = array();                              
 
             // Create the data objects
             foreach( $this->functions as $function ) 
             {
-                $functions[] = new plPhpFunction( $function[0], $function[1] );                                    
+                $functions[] = new plPhpFunction( $function[0], $function[1], $function[2] );                                    
             }
-            foreach( $this->variables as $variable ) 
-            {
-                $variables[] = new plPhpAttribute( $variable[0], $variable[1] );                                    
-            }
-            $class = new plPhpClass( $this->class, $variables, $functions, $this->implements, $this->extends );                              
+            $class = new plPhpClass( $this->class, $this->variables, $functions, $this->implements, $this->extends );                              
             
             $this->classes[$this->class] = $class;
         }
