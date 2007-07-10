@@ -67,8 +67,18 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
                 {
                     continue;
                 }
-                // Skip T_VAR and T_ARRAY (function typehints)
-                else if ( is_array( $token ) === true && ( $token[0] === T_VAR || $token[0] === T_ARRAY ) ) 
+                // Skip T_VAR, T_ARRAY after T_FUNCTION (function typehints)
+                else if ( is_array( $token ) === true && $this->lastToken === T_FUNCTION && ( $token[0] === T_VAR || $token[0] === T_ARRAY ) ) 
+                {
+                    continue;
+                }
+                // Skip = after T_FUNCTION (function defaults)
+                else if ( is_array( $token ) !== true && $this->lastToken === T_FUNCTION && $token === '=' ) 
+                {
+                    continue;
+                }
+                // Skip T_CONSTANT_ENCAPSED_STRING after T_FUNCTION (function defaults)
+                else if ( is_array( $token ) === true && $this->lastToken === T_FUNCTION && $token[0] === T_CONSTANT_ENCAPSED_STRING ) 
                 {
                     continue;
                 }
