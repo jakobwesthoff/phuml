@@ -67,6 +67,11 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
                 {
                     continue;
                 }
+                // Skip T_VAR and T_ARRAY (function typehints)
+                else if ( is_array( $token ) === true && ( $token[0] === T_VAR || $token[0] === T_ARRAY ) ) 
+                {
+                    continue;
+                }
                 // New intial token of interest 
                 else if ( $this->lastToken === null && is_array( $token ) === true ) 
                 {
@@ -129,9 +134,6 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
                 $this->modifier  = $token[1];
                 $this->lastToken = $token[0];
             break;
-            case T_VAR:
-                $this->lastToken = $token[0];
-            break;
             case T_FUNCTION:
                 $this->lastToken = $token[0];
             break;
@@ -154,8 +156,12 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
                 $this->lastToken = null;
             break;                        
             case T_FUNCTION:
-                // Add the current function
-                $this->function = $token[1];                           
+                // Add the current function only if there is no function name already
+                // Because if we know the function name already this is a type hint
+                if ( $this->function === null ) 
+                {
+                    $this->function = $token[1];                           
+                }
             break;
             case T_CLASS:
                 // Set the class name
@@ -179,7 +185,6 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             case T_PUBLIC:
             case T_PROTECTED:
             case T_PRIVATE:
-            case T_VAR:
                 $this->variables[] = new plPhpVariable( $token[1], $this->modifier );
                 $this->lastToken = null;
                 $this->modifier = 'public';
