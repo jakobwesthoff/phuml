@@ -6,6 +6,8 @@ class plStructureWriterDot implements plStructureWriter
 
     private $output;
 
+    private $structure;
+
     public function __construct() 
     {
         $this->properties = array( 
@@ -16,18 +18,23 @@ class plStructureWriterDot implements plStructureWriter
             'titleColor'           => '#2e3436',
             'attributesColor'      => '#2e3436',
             'functionsColor'       => '#2e3436',
-            'titleFont'            => 'sans-serif',
-            'attributesFont'       => 'sans-serif',
-            'functionsFont'        => 'sans-serif',
+            'titleFont'            => 'Helvetica',
+            'attributesFont'       => 'Helvetica',
+            'functionsFont'        => 'Helvetica',
             'titleFontsize'        => 12,
             'attributesFontsize'   => 10,
             'functionsFontsize'    => 10,
         );
+
+        $this->structure = null;
+        $this->output = null;
     }
 
     public function writeStructure( $structure, $outfile ) 
     {
-        $this->output = "digraph class_structure {\n";
+        $this->structure = $structure;
+
+        $this->output = 'digraph "' . sha1( mt_rand() ) . '" {' . "\n";
 
         foreach( $structure as $object ) 
         {
@@ -77,6 +84,12 @@ class plStructureWriterDot implements plStructureWriter
         // Create class inheritance relation
         if ( $o->extends !== null ) 
         {
+            // Check if we need an "external" class node
+            if ( in_array( $o->extends, $this->structure ) !== true ) 
+            {
+                $def .= $this->getClassDefinition( $o->extends );
+            }
+
             $def .= $this->createNodeRelation( 
                 $this->getUniqueId( $o->extends ),
                 $this->getUniqueId( $o ),
@@ -91,6 +104,12 @@ class plStructureWriterDot implements plStructureWriter
         // Create class implements relation
         foreach( $o->implements as $interface ) 
         {
+            // Check if we need an "external" interface node
+            if ( in_array( $interface, $this->structure ) !== true ) 
+            {
+                $def .= $this->getInterfaceDefinition( $interface );
+            }
+
             $def .= $this->createNodeRelation( 
                 $this->getUniqueId( $interface ),
                 $this->getUniqueId( $o ),
@@ -130,6 +149,12 @@ class plStructureWriterDot implements plStructureWriter
         // Create interface inheritance relation        
         if ( $o->extends !== null ) 
         {
+            // Check if we need an "external" interface node
+            if ( in_array( $o->extends, $this->structure ) !== true ) 
+            {
+                $def .= $this->getInterfaceDefinition( $o->extends );
+            }
+
             $def .= $this->createNodeRelation( 
                 $this->getUniqueId( $o->extends ),
                 $this->getUniqueId( $o ),
