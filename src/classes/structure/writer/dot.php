@@ -95,7 +95,7 @@ class plStructureWriterDot implements plStructureWriter
                 $this->getUniqueId( $o ),
                 array( 
                     'dir'       => 'back',
-                    'arrowType' => 'normal',
+                    'arrowtail' => 'normal',
                     'style'     => 'solid'
                 )
             );
@@ -115,7 +115,7 @@ class plStructureWriterDot implements plStructureWriter
                 $this->getUniqueId( $o ),
                 array( 
                     'dir'       => 'back',
-                    'arrowType' => 'empty',
+                    'arrowtail' => 'empty',
                     'style'     => 'dashed',
                 )
             );
@@ -160,7 +160,7 @@ class plStructureWriterDot implements plStructureWriter
                 $this->getUniqueId( $o ),
                 array( 
                     'dir'       => 'back',
-                    'arrowType' => 'normal',
+                    'arrowtail' => 'normal',
                     'style'     => 'solid'
                 )
             );
