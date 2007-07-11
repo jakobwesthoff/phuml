@@ -11,19 +11,7 @@ class plStructureWriterDot implements plStructureWriter
     public function __construct() 
     {
         $this->properties = array( 
-            'tableBorder'          => 1,
-            'titleBackground'      => '#fcaf3e',
-            'attributesBackground' => '#eeeeec',
-            'functionsBackground'  => '#eeeeec',
-            'titleColor'           => '#2e3436',
-            'attributesColor'      => '#2e3436',
-            'functionsColor'       => '#2e3436',
-            'titleFont'            => 'Helvetica',
-            'attributesFont'       => 'Helvetica',
-            'functionsFont'        => 'Helvetica',
-            'titleFontsize'        => 12,
-            'attributesFontsize'   => 10,
-            'functionsFontsize'    => 10,
+            'palette'          => new plStructureWriterDotDefaultPalette(),
         );
 
         $this->structure = null;
@@ -35,6 +23,9 @@ class plStructureWriterDot implements plStructureWriter
         $this->structure = $structure;
 
         $this->output = 'digraph "' . sha1( mt_rand() ) . '" {' . "\n";
+        $this->output .= 'splines = true;' . "\n";
+        $this->output .= 'overlap = false;' . "\n";
+        $this->output .= 'mindist = 0.6;' . "\n";
 
         foreach( $structure as $object ) 
         {
@@ -76,7 +67,7 @@ class plStructureWriterDot implements plStructureWriter
         $def .= $this->createNode( 
             $this->getUniqueId( $o ),
             array(
-                'label' => $this->createLabel( $name, $attributes, $functions ),
+                'label' => $this->createClassLabel( $name, $attributes, $functions ),
                 'shape' => 'plaintext',
             )
         );
@@ -129,7 +120,7 @@ class plStructureWriterDot implements plStructureWriter
         $def = '';
 
         // First we need to create the needed data arrays
-        $name = '{interface} ' . $o->name;
+        $name = $o->name;
         
         $functions = array();
         foreach( $o->functions as $function ) 
@@ -141,7 +132,7 @@ class plStructureWriterDot implements plStructureWriter
         $def .= $this->createNode( 
             $this->getUniqueId( $o ),
             array(
-                'label' => $this->createLabel( $name, array(), $functions ),
+                'label' => $this->createInterfaceLabel( $name, array(), $functions ),
                 'shape' => 'plaintext',
             )
         );
@@ -226,38 +217,35 @@ class plStructureWriterDot implements plStructureWriter
         return $relation;
     }
 
-    private function createLabel( $name, $attributes, $functions )     
+    private function createInterfaceLabel( $name, $attributes, $functions )     
     {
-        // Escape everything that shouldn't be there
-        $this->escapeLabelData( &$name, &$attributes, &$functions );
-
         // Start the table
         $label = '<<TABLE CELLSPACING="0" BORDER="0" ALIGN="LEFT">';
         
         // The title
-        $label .= '<TR><TD BORDER="' . $this->tableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->titleBackground . '"><FONT COLOR="' . $this->titleColor . '" FACE="' . $this->titleFont . '" POINT-SIZE="' . $this->titleFontsize . '">' . $name . '</FONT></TD></TR>';
+        $label .= '<TR><TD BORDER="' . $this->palette->interfaceTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->palette->interfaceTitleBackground . '"><FONT COLOR="' . $this->palette->interfaceTitleColor . '" FACE="' . $this->palette->interfaceTitleFont . '" POINT-SIZE="' . $this->palette->interfaceTitleFontsize . '">' . $name . '</FONT></TD></TR>';
 
         // The attributes block
-        $label .= '<TR><TD BORDER="' . $this->tableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->attributesBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->palette->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->interfaceAttributesBackground . '">';
         if ( count( $attributes ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $attributes as $attribute ) 
         {
-            $label .= '<FONT COLOR="' . $this->attributesColor . '" FACE="' . $this->attributesFont . '" POINT-SIZE="' . $this->attributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->palette->interfaceAttributesColor . '" FACE="' . $this->palette->interfaceAttributesFont . '" POINT-SIZE="' . $this->palette->interfaceAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
         // The function block
-        $label .= '<TR><TD BORDER="' . $this->tableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->functionsBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->palette->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->interfaceFunctionsBackground . '">';
         if ( count( $functions ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $functions as $function ) 
         {
-            $label .= '<FONT COLOR="' . $this->functionsColor . '" FACE="' . $this->functionsFont . '" POINT-SIZE="' . $this->functionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->palette->interfaceFunctionsColor . '" FACE="' . $this->palette->interfaceFunctionsFont . '" POINT-SIZE="' . $this->palette->interfaceFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
@@ -267,29 +255,42 @@ class plStructureWriterDot implements plStructureWriter
         return $label;
     }
 
-    private function escapeLabelData( $name, $attributes, $functions ) 
+    private function createClassLabel( $name, $attributes, $functions )     
     {
-        /*
-        $characters = array( 
-            '$',
-        );
+        // Start the table
+        $label = '<<TABLE CELLSPACING="0" BORDER="0" ALIGN="LEFT">';
+        
+        // The title
+        $label .= '<TR><TD BORDER="' . $this->palette->classTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->palette->classTitleBackground . '"><FONT COLOR="' . $this->palette->classTitleColor . '" FACE="' . $this->palette->classTitleFont . '" POINT-SIZE="' . $this->palette->classTitleFontsize . '">' . $name . '</FONT></TD></TR>';
 
-        $replacement = array( 
-            '$',
-        );
-
-        $name = str_replace( $characters, $replacement, $name );
-
-        foreach( $attributes as $key => $value ) 
+        // The attributes block
+        $label .= '<TR><TD BORDER="' . $this->palette->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->classAttributesBackground . '">';
+        if ( count( $attributes ) === 0 ) 
         {
-            $attributes[$key] = str_replace( $characters, $replacement, $value );
+            $label .= ' ';
         }
-
-        foreach( $functions as $key => $value ) 
+        foreach( $attributes as $attribute ) 
         {
-            $functions[$key] = str_replace( $characters, $replacement, $value );
+            $label .= '<FONT COLOR="' . $this->palette->classAttributesColor . '" FACE="' . $this->palette->classAttributesFont . '" POINT-SIZE="' . $this->palette->classAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
         }
-        */
+        $label .= '</TD></TR>';
+
+        // The function block
+        $label .= '<TR><TD BORDER="' . $this->palette->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->classFunctionsBackground . '">';
+        if ( count( $functions ) === 0 ) 
+        {
+            $label .= ' ';
+        }
+        foreach( $functions as $function ) 
+        {
+            $label .= '<FONT COLOR="' . $this->palette->classFunctionsColor . '" FACE="' . $this->palette->classFunctionsFont . '" POINT-SIZE="' . $this->palette->classFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
+        }
+        $label .= '</TD></TR>';
+
+        // End the table
+        $label .= '</TABLE>>';
+
+        return $label;
     }
 
     public function __get( $key )
