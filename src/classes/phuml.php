@@ -9,8 +9,8 @@ class plPhuml
     public function __construct() 
     {
         $this->properties = array( 
-            'generator'     => new plStructureGeneratorTokenizer(),
-            'writer'        => new plStructureWriterDot(),
+            'generator'     => plStructureGenerator::factory( 'tokenizer' ),
+            'writer'        => plStructureWriter::factory( 'dot' ),
         );
 
         $this->files = array();
