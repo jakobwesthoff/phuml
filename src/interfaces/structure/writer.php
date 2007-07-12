@@ -2,7 +2,7 @@
 
 interface plStructureWriter 
 {
-    public function writeStructure( $structure, $outfile );   
+    public function writeStructure( $structure );   
 }
 
 ?>

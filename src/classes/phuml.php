@@ -18,17 +18,44 @@ class plPhuml
 
     public function addFile( $file ) 
     {
-
+        $this->files[] = $file;
     }
 
-    public function addDirectory( $directory ) 
+    public function addDirectory( $directory, $extension = 'php', $recursive = true ) 
     {
+        if ( $recursive === false ) 
+        {
+            $iterator = new DirectoryIterator( $directory );
+        }
+        else
+        {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator( $directory )
+            );
+        }
 
+        foreach( $iterator as $entry ) 
+        {
+            if ( $entry->isDir() === true ) 
+            {
+                continue;
+            }
+            
+            if ( $sub = strtolower( substr( $entry->getFilename(), -1 * strlen( $extension ) ) ) !== strtolower( $extension ) ) 
+            {
+                continue;
+            }
+
+            $this->files[] = $entry->getPathname();
+        }       
     }
 
     public function generate( $outfile ) 
     {
+        $structure = $this->generator->createStructure( $this->files );
+        $output    = $this->writer->writeStructure( $structure );
 
+        file_put_contents( $outfile, $output );
     }
 
 

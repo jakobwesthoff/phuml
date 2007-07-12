@@ -18,7 +18,7 @@ class plStructureWriterDot implements plStructureWriter
         $this->output = null;
     }
 
-    public function writeStructure( $structure, $outfile ) 
+    public function writeStructure( $structure ) 
     {
         $this->structure = $structure;
 
@@ -41,7 +41,7 @@ class plStructureWriterDot implements plStructureWriter
 
         $this->output .= "}";
 
-        file_put_contents( $outfile, $this->output );
+        return $this->output;
     }
 
     private function getClassDefinition( $o ) 

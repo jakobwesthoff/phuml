@@ -40,7 +40,7 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
         $this->lastToken    = null;
     }
 
-    public function createGraph( array $files ) 
+    public function createStructure( array $files ) 
     {
         $this->initGlobalAttributes();
 
