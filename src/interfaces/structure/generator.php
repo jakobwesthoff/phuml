@@ -4,7 +4,7 @@ abstract class plStructureGenerator
 {
     public static function factory( $generator ) 
     {
-        $classname = 'plStructureGenerator' . ucfirst( $generator );
+        $classname = 'plStructure' . ucfirst( $generator ) . 'Generator';
         if ( class_exists( $classname ) === false ) 
         {
             throw new plStructureGeneratorNotFoundException( $generator );

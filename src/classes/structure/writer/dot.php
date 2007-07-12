@@ -1,6 +1,6 @@
 <?php
 
-class plStructureWriterDot extends plStructureWriter 
+class plStructureDotWriter extends plStructureWriter 
 {
     private $properties;
 
