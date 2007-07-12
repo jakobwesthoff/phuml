@@ -1,16 +1,20 @@
 <?php
 
 return array( 
-    'plStructureGenerator'                  =>  'interfaces/generator.php',
-    'plStructureTokenizerGenerator'         =>  'classes/generator/tokenizer.php',
+    'plStructureGenerator'                          =>  'interfaces/generator.php',
+    'plStructureTokenizerGenerator'                 =>  'classes/generator/tokenizer.php',
 
-    'plStructureWriterNotFoundException'    =>  'exceptions/writer/notFound.php',
+    'plStructureWriterNotFoundException'            =>  'exceptions/writer/notFound.php',
 
-    'plStructureWriter'                     =>  'interfaces/writer.php',
-    'plStructureDotWriter'                  =>  'classes/writer/dot.php',
-    'plStructureDotWriterDefaultStyle'      =>  'classes/writer/dot/style/default.php',
+    'plStructureWriter'                             =>  'interfaces/writer.php',
+    'plStructureDotWriter'                          =>  'classes/writer/dot.php',
 
-    'plStructureWriterNotFoundException'    =>  'exceptions/writer/notFound.php',
+    'plStructureDotWriterStyle'                     =>  'interfaces/writer/dot/style.php',
+    'plStructureDotWriterDefaultStyle'              =>  'classes/writer/dot/style/default.php',
+
+    'plStructureDotWriterStyleNotFoundException'    =>  'exceptions/writer/dot/style/notFound.php',
+
+    'plStructureWriterNotFoundException'            =>  'exceptions/writer/notFound.php',
 
 );
 

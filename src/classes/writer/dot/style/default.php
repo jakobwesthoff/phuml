@@ -1,6 +1,6 @@
 <?php
 
-class plStructureWriterDotDefaultStyle extends plStructureWriterDotStyle
+class plStructureDotWriterDefaultStyle extends plStructureDotWriterStyle
 {
 }
 

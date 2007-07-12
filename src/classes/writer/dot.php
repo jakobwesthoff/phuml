@@ -11,7 +11,7 @@ class plStructureDotWriter extends plStructureWriter
     public function __construct() 
     {
         $this->properties = array( 
-            'palette'          => new plStructureWriterDotDefaultPalette(),
+            'style'          => plStructureDotWriterStyle::factory( 'default' ),
         );
 
         $this->structure = null;
@@ -223,29 +223,29 @@ class plStructureDotWriter extends plStructureWriter
         $label = '<<TABLE CELLSPACING="0" BORDER="0" ALIGN="LEFT">';
         
         // The title
-        $label .= '<TR><TD BORDER="' . $this->palette->interfaceTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->palette->interfaceTitleBackground . '"><FONT COLOR="' . $this->palette->interfaceTitleColor . '" FACE="' . $this->palette->interfaceTitleFont . '" POINT-SIZE="' . $this->palette->interfaceTitleFontsize . '">' . $name . '</FONT></TD></TR>';
+        $label .= '<TR><TD BORDER="' . $this->style->interfaceTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->style->interfaceTitleBackground . '"><FONT COLOR="' . $this->style->interfaceTitleColor . '" FACE="' . $this->style->interfaceTitleFont . '" POINT-SIZE="' . $this->style->interfaceTitleFontsize . '">' . $name . '</FONT></TD></TR>';
 
         // The attributes block
-        $label .= '<TR><TD BORDER="' . $this->palette->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->interfaceAttributesBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->style->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->interfaceAttributesBackground . '">';
         if ( count( $attributes ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $attributes as $attribute ) 
         {
-            $label .= '<FONT COLOR="' . $this->palette->interfaceAttributesColor . '" FACE="' . $this->palette->interfaceAttributesFont . '" POINT-SIZE="' . $this->palette->interfaceAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->style->interfaceAttributesColor . '" FACE="' . $this->style->interfaceAttributesFont . '" POINT-SIZE="' . $this->style->interfaceAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
         // The function block
-        $label .= '<TR><TD BORDER="' . $this->palette->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->interfaceFunctionsBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->style->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->interfaceFunctionsBackground . '">';
         if ( count( $functions ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $functions as $function ) 
         {
-            $label .= '<FONT COLOR="' . $this->palette->interfaceFunctionsColor . '" FACE="' . $this->palette->interfaceFunctionsFont . '" POINT-SIZE="' . $this->palette->interfaceFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->style->interfaceFunctionsColor . '" FACE="' . $this->style->interfaceFunctionsFont . '" POINT-SIZE="' . $this->style->interfaceFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
@@ -261,29 +261,29 @@ class plStructureDotWriter extends plStructureWriter
         $label = '<<TABLE CELLSPACING="0" BORDER="0" ALIGN="LEFT">';
         
         // The title
-        $label .= '<TR><TD BORDER="' . $this->palette->classTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->palette->classTitleBackground . '"><FONT COLOR="' . $this->palette->classTitleColor . '" FACE="' . $this->palette->classTitleFont . '" POINT-SIZE="' . $this->palette->classTitleFontsize . '">' . $name . '</FONT></TD></TR>';
+        $label .= '<TR><TD BORDER="' . $this->style->classTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->style->classTitleBackground . '"><FONT COLOR="' . $this->style->classTitleColor . '" FACE="' . $this->style->classTitleFont . '" POINT-SIZE="' . $this->style->classTitleFontsize . '">' . $name . '</FONT></TD></TR>';
 
         // The attributes block
-        $label .= '<TR><TD BORDER="' . $this->palette->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->classAttributesBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->style->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->classAttributesBackground . '">';
         if ( count( $attributes ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $attributes as $attribute ) 
         {
-            $label .= '<FONT COLOR="' . $this->palette->classAttributesColor . '" FACE="' . $this->palette->classAttributesFont . '" POINT-SIZE="' . $this->palette->classAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->style->classAttributesColor . '" FACE="' . $this->style->classAttributesFont . '" POINT-SIZE="' . $this->style->classAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
         // The function block
-        $label .= '<TR><TD BORDER="' . $this->palette->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->palette->classFunctionsBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->style->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->classFunctionsBackground . '">';
         if ( count( $functions ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $functions as $function ) 
         {
-            $label .= '<FONT COLOR="' . $this->palette->classFunctionsColor . '" FACE="' . $this->palette->classFunctionsFont . '" POINT-SIZE="' . $this->palette->classFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->style->classFunctionsColor . '" FACE="' . $this->style->classFunctionsFont . '" POINT-SIZE="' . $this->style->classFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
