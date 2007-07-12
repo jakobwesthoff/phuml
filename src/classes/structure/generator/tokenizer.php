@@ -280,7 +280,7 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             {
                 $implements[$key] = array_key_exists( $impl, $this->interfaces ) 
                                     ? $this->interfaces[$impl]
-                                    : new plPhpInterface( $impl );
+                                    : $this->interfaces[$impl] = new plPhpInterface( $impl );
             }
             $class->implements = $implements;
 
@@ -290,7 +290,7 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             }
             $class->extends = array_key_exists( $class->extends, $this->classes ) 
                               ? $this->classes[$class->extends] 
-                              : new plPhpClass( $class->extends );
+                              : $this->classes[$class->extends] = new plPhpClass( $class->extends );
         }
         foreach( $this->interfaces as $interface ) 
         {           
@@ -300,7 +300,7 @@ class plStructureGeneratorTokenizer implements plStructureGenerator
             }
             $interface->extends = array_key_exists( $interface->extends, $this->interfaces ) 
                                  ? $this->interfaces[$interface->extends] 
-                                 : new plPhpInterface( $interface->extends );
+                                 : $this->interfaces[$interface->extends] = new plPhpInterface( $interface->extends );
         }
     }
 }
