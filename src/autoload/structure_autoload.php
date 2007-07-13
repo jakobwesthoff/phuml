@@ -11,6 +11,7 @@ return array(
 
     'plStructureDotWriterStyle'                     =>  'interfaces/writer/dot/style.php',
     'plStructureDotWriterDefaultStyle'              =>  'classes/writer/dot/style/default.php',
+    'plStructureDotWriterTestStyle'                 =>  'classes/writer/dot/style/test.php',
 
     'plStructureDotWriterStyleNotFoundException'    =>  'exceptions/writer/dot/style/notFound.php',
 
