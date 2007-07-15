@@ -1,14 +1,13 @@
 <?php
 
-class plPhpVariable
+class plPhpFunctionParameter
 {
     private $properties;
 
-    public function __construct( $name, $modifier = 'public', $type = null ) 
+    public function __construct( $name, $type = null ) 
     {
         $this->properties = array( 
             'name'      =>  $name,
-            'modifier'  =>  $modifier,
             'type'      =>  $type,
         );
     }

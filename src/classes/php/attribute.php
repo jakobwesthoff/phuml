@@ -1,17 +1,15 @@
 <?php
 
-class plPhpClass
+class plPhpAttribute
 {
     private $properties;
 
-    public function __construct( $name, $attributes = array(), $functions = array(), $implements = array(), $extends = null ) 
+    public function __construct( $name, $modifier = 'public', $type = null ) 
     {
         $this->properties = array( 
-            'name'          =>  $name,
-            'attributes'    =>  $attributes,
-            'functions'     =>  $functions,
-            'implements'    =>  $implements,
-            'extends'       =>  $extends,
+            'name'      =>  $name,
+            'modifier'  =>  $modifier,
+            'type'      =>  $type,
         );
     }
 

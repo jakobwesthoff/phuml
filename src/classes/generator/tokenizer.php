@@ -5,13 +5,8 @@ class plStructureTokenizerGenerator extends plStructureGenerator
     private $classes;
     private $interfaces;
 
-    private $class;
-    private $interface;
-    private $variables;
-    private $functions;
-    private $implements;
-    private $extends;
-    private $modifier;
+    private $parserStruct;
+    private $lastToken;
 
     public function __construct() 
     {
@@ -27,17 +22,18 @@ class plStructureTokenizerGenerator extends plStructureGenerator
 
     private function initParserAttributes() 
     {
-        $this->class        = null;
-        $this->interface    = null;
-        $this->function     = null;
-        $this->variables    = array();
-        $this->functions    = array();
-        $this->params       = array();
-        $this->implements   = array();
-        $this->extends      = null;
-        $this->modifier     = 'public';
-        
-        $this->lastToken    = null;
+        $this->parserStruct = array( 
+            'class'         => null,
+            'interface'     => null,
+            'attributes'    => array(),
+            'functions'     => array(),
+            'params'        => array(),
+            'implemens'     => array(),
+            'extends'       => array(),
+            'modifier'      => 'public',            
+        );
+
+        $this->lastToken = array();
     }
 
     public function createStructure( array $files ) 
@@ -52,69 +48,112 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             // Loop through all tokens
             foreach( $tokens as $token ) 
             {
-                // Skip all whitespaces
-                if ( is_array( $token ) === true && $token[0] === T_WHITESPACE ) 
+                // Split into Simple and complex token
+                if ( is_array( $token ) !== true ) 
                 {
-                    continue;
+                    switch( $token ) 
+                    {
+                        case ',':
+                            $this->comma();
+                        break;
+
+                        case '(':
+                            $this->opening_bracket();
+                        break;
+
+                        case ')':
+                            $this->closing_bracket();
+                        break;
+                        
+                        case '=':
+                            $this->equal_sign();
+                        break;
+                        default:
+                            // Ignore everything else
+                            $this->lastToken = null;                        
+                    }
                 }
-                // Skip commas as in implements statements
-                else if ( is_array( $token ) !== true && $token === ',' ) 
+                else if ( is_array( $token ) === true ) 
                 {
-                    continue;
-                }
-                // Skip opening brackets
-                else if ( is_array( $token ) !== true && $token === '(' ) 
-                {
-                    continue;
-                }
-                // Skip T_VAR, T_ARRAY after T_FUNCTION (function typehints)
-                else if ( is_array( $token ) === true && $this->lastToken === T_FUNCTION && ( $token[0] === T_VAR || $token[0] === T_ARRAY ) ) 
-                {
-                    continue;
-                }
-                // Skip = after T_FUNCTION (function defaults)
-                else if ( is_array( $token ) !== true && $this->lastToken === T_FUNCTION && ( $token === '=' ) ) 
-                {
-                    continue;
-                }
-                // Skip stuff after T_FUNCTION (function defaults)
-                else if ( is_array( $token ) === true && $this->lastToken === T_FUNCTION && ( $token[0] === T_CONSTANT_ENCAPSED_STRING || $token[0] === T_LNUMBER || $token[0] === T_DNUMBER || $token[0] === T_PAAMAYIM_NEKUDOTAYIM ) ) 
-                {
-                    continue;
-                }
-                // New intial token of interest 
-                else if ( $this->lastToken === null && is_array( $token ) === true ) 
-                {
-                    $this->initialToken( $token );
-                }
-                // We found a string token. Isolate information based on the last token found
-                else if ( is_array( $token ) === true && $token[0] === T_STRING ) 
-                {
-                    $this->stringToken( $token );
-                } 
-                // T_Variable
-                else if ( is_array( $token ) === true && $token[0] === T_VARIABLE ) 
-                {
-                    $this->variableToken( $token );
-                }
-                // Closing bracket
-                else if ( is_array( $token ) !== true && $token === ')' ) 
-                {
-                    $this->closingBracket( $token );
-                }
-                // T_FUNCTION
-                else if ( is_array( $token ) === true && $token[0] === T_FUNCTION ) 
-                {
-                    $this->functionToken( $token );
-                }
-                // There is a new token we do not know and don't want to know
-                else 
-                {
-                    $this->lastToken = null;
+                    switch ( $token[0] ) 
+                    {
+                        case T_WHITESPACE:
+                            $this->t_whitespace( $token );
+                        break;
+
+                        case T_FUNCTION:
+                            $this->t_function( $token );
+                        break;
+
+                        case T_VAR:
+                            $this->t_var( $token );
+                        break;
+
+                        case T_VARIABLE:
+                            $this->t_variable( $token );
+                        break;
+
+                        case T_ARRAY:
+                            $this->t_array( $token );
+                        break;
+
+                        case T_CONSTANT_ENCAPSED_STRING:
+                            $this->t_constant_encapsed_string( $token );
+                        break;
+
+                        case T_LNUMBER:
+                            $this->t_lnumber( $token );
+                        break;
+
+                        case T_DNUMBER:
+                            $this->t_dnumber( $token );
+                        break;
+
+                        case T_PAAMAYIM_NEKUDOTAYIM:
+                            $this->t_paamayim_neukudotayim( $token );
+                        break;
+
+                        case T_STRING:
+                            $this->t_string( $token );
+                        break;
+
+                        case T_INTERFACE:           
+                            $this->t_interface( $token );
+                        break;
+
+                        case T_CLASS:
+                            $this->t_class( $token );
+                        break;
+                        
+                        case T_IMPLEMENTS:
+                            $this->t_implements( $token );
+                        break;
+
+                        case T_EXTENDS:
+                            $this->t_extends( $token );
+                        break;
+
+                        case T_PUBLIC:
+                            $this->t_public( $token );
+                        break;
+
+                        case T_PROTECTED:
+                            $this->t_protected( $token );
+                        break;
+
+                        case T_PRIVATE:
+                            $this->t_private( $token );
+                        break;
+
+                        default:
+                            // Ignore everything else
+                            $this->lastToken = null;                        
+                    }
                 }
             }
+            // One file is completely scanned here
 
-            // Store interface or class in parser arrays
+            // Store interface or class in the parser arrays
             $this->storeClassOrInterface();
         }
 
@@ -125,147 +164,378 @@ class plStructureTokenizerGenerator extends plStructureGenerator
         return array_merge( $this->classes, $this->interfaces );
     }
 
-    private function initialToken( $token ) 
+    private function comma() 
     {
-        switch ( $token[0] ) 
+        // Ignore commas
+    }
+
+    private function opening_bracket() 
+    {
+        // Ignore opening brackets
+    }
+
+    private function closing_bracket() 
+    {
+        switch ( $this->lastToken ) 
         {
-            case T_INTERFACE:                        
-            case T_CLASS:
-                $this->storeClassOrInterface(); 
-                $this->lastToken = $token[0];
+            case T_FUNCTION:
+                // The function declaration has been closed
+
+                // Add the current function
+                $this->parserStruct['functions'][] = array(
+                    $this->parserStruct['function'],
+                    $this->parserStruct['modifier'],
+                    $this->parserStruct['params']
+                );                           
+                // Reset the last token
+                $this->lastToken = null;
+                //Reset the modifier state
+                $this->parserStruct['modifier'] = 'public';
+                // Reset the params array
+                $this->parserStruct['params'] = array();
+                // Reset the function name
+                $this->parserStruct['function'] = null;            
             break;
-            case T_IMPLEMENTS:
-            case T_EXTENDS:
-                $this->lastToken = $token[0];
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function equal_sign() 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // just ignore the equal sign
             break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_whitespace( $token ) 
+    {
+        // Ignore whitespaces
+    }
+
+    private function t_function( $token ) 
+    {
+        switch( $this->lastToken ) 
+        {
+            case null:
             case T_PUBLIC:
             case T_PROTECTED:
             case T_PRIVATE:
-                $this->modifier  = $token[1];
                 $this->lastToken = $token[0];
             break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_var( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
             case T_FUNCTION:
-                $this->lastToken = $token[0];
+                // just ignore the T_VAR
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_variable( $token ) 
+    {
+        switch( $this->lastToken ) 
+        {
+            case T_PUBLIC:
+            case T_PROTECTED:
+            case T_PRIVATE:
+                // A new class attribute
+                $this->parserStruct['attributes'][] = array( $token[1], $this->parserStruct['modifier'] );
+                $this->lastToken = null;
+                $this->parserStruct['modifier'] = 'public';
+            break;
+            case T_FUNCTION:
+                // A new function parameter
+                $this->parserStruct['params'][] = $token[1];
             break;
         }
     }
 
-    private function stringToken( $token ) 
+    private function t_array( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // just ignore the T_ARRAY
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_constant_encapsed_string( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // just ignore the T_CONSTANT_ENCAPSED_STRING
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_lnumber( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // just ignore the T_LNUMBER
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_dnumber( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // just ignore the T_DNUMBER
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_paamayim_neukudotayim( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case T_FUNCTION:
+                // just ignore the T_PAAMAYIM_NEKUDOTAYIM
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_string( $token ) 
     {
         switch( $this->lastToken ) 
         {
             case T_IMPLEMENTS:
                 // Add interface to implements array
-                $this->implements[] = $token[1];
-                // We do not reset the last token here, because there might be multiple interfaces
+                $this->parserStruct['implements'][] = $token[1];
+                // We do not reset the last token here, because 
+                // there might be multiple interfaces
             break;
             case T_EXTENDS:
                 // Set the superclass
-                $this->extends = $token[1];
+                $this->parserStruct['extends'] = $token[1];
                 // Reset the last token
                 $this->lastToken = null;
             break;                        
             case T_FUNCTION:
                 // Add the current function only if there is no function name already
                 // Because if we know the function name already this is a type hint
-                if ( $this->function === null ) 
+                if ( $this->parserStruct['function'] === null ) 
                 {
-                    $this->function = $token[1];                           
+                    $this->parserStruct['function'] = $token[1];                           
                 }
             break;
             case T_CLASS:
                 // Set the class name
-                $this->class = $token[1];
+                $this->parserStruct['class'] = $token[1];
                 // Reset the last token
                 $this->lastToken = null;
             break;
             case T_INTERFACE:
                 // Set the interface name
-                $this->interface = $token[1];
+                $this->parserStruct['interface'] = $token[1];
                 // Reset the last Token
                 $this->lastToken = null;
             break;
+            default:
+                $this->lastToken = null;
         }
     }
 
-    private function variableToken( $token ) 
+    private function t_interface( $token )  
     {
         switch( $this->lastToken ) 
         {
-            case T_PUBLIC:
-            case T_PROTECTED:
-            case T_PRIVATE:
-                $this->variables[] = new plPhpVariable( $token[1], $this->modifier );
+            case null:
+                // New initial interface token
+                // Store the class or interface definition if there is any in the 
+                // parser arrays ( There might be more than one class/interface per
+                // file )
+                $this->storeClassOrInterface();
+
+                // Remember the last token
+                $this->lastToken = $token[0];
+            break;
+            default:
                 $this->lastToken = null;
-                $this->modifier = 'public';
-            break;
-            case T_FUNCTION:
-                $this->params[] = new plPhpVariable( $token[1] );
-            break;
         }
     }
 
-    private function closingBracket( $token ) 
+    private function t_class( $token ) 
+    {
+        switch( $this->lastToken ) 
+        {
+            case null:
+                // New initial interface token
+                // Store the class or interface definition if there is any in the 
+                // parser arrays ( There might be more than one class/interface per
+                // file )
+                $this->storeClassOrInterface();
+
+                // Remember the last token
+                $this->lastToken = $token[0];
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_implements( $token ) 
     {
         switch ( $this->lastToken ) 
         {
-            case T_FUNCTION:
-                // Add the current function
-                $this->functions[] = array( $this->function, $this->modifier, $this->params );                           
-                // Reset the last token
-                $this->lastToken = null;
-                //Reset the modifier state
-                $this->modifier = 'public';
-                // Reset the params array
-                $this->params = array();
-                // Reset the function name
-                $this->function = null;            
+            case null:
+                $this->lastToken = $token[0];
             break;
+            default:
+                $this->lastToken = null;
         }
     }
 
-    private function functionToken( $token ) 
+    private function t_extends( $token ) 
     {
-        switch( $this->lastToken ) 
+        switch ( $this->lastToken ) 
         {
-            case T_PUBLIC:
-            case T_PROTECTED:
-            case T_PRIVATE:
+            case null:
                 $this->lastToken = $token[0];
             break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_public( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case null:
+                $this->lastToken                 = $token[0];
+                $this->parserStruct['modifier']  = $token[1];
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_protected( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case null:
+                $this->lastToken                 = $token[0];
+                $this->parserStruct['modifier']  = $token[1];
+            break;
+            default:
+                $this->lastToken = null;
+        }
+    }
+
+    private function t_private( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case null:
+                $this->lastToken                 = $token[0];
+                $this->parserStruct['modifier']  = $token[1];
+            break;
+            default:
+                $this->lastToken = null;
         }
     }
 
     private function storeClassOrInterface() 
     {
         // First we need to check if we should store interface data found so far
-        if ( $this->interface !== null ) 
+        if ( $this->parserStruct['interface'] !== null ) 
         {
             // Init data storage
             $functions = array();
 
             // Create the data objects
-            foreach( $this->functions as $function ) 
+            foreach( $this->parserStruct['functions'] as $function ) 
             {
-                $functions[] = new plPhpFunction( $function[0], $function[1], $function[2] );                                    
+                // Create the needed parameter objects
+                $params = array();
+                foreach( $function[2] as $param) 
+                {
+                    $params[] = new plPhpFunctionParameter( $param );
+                }
+                $functions[] = new plPhpFunction( 
+                    $function[0],
+                    $function[1],
+                    $params
+                );                                    
             }
-            $interface = new plPhpInterface( $this->interface, $functions, $this->extends );                              
+            $interface = new plPhpInterface( 
+                $this->parserStruct['interface'],
+                $functions,
+                $this->parserStruct['extends']
+            );                              
             
-            $this->interfaces[$this->interface] = $interface;
+            // Store in the global interface array
+            $this->interfaces[$this->parserStruct['interface']] = $interface;
         }
-        else if ( $this->class !== null ) 
+        // If there is no interface, we maybe need to store a class
+        else if ( $this->parserStruct['class'] !== null ) 
         {
             // Init data storage
-            $functions = array();
+            $functions  = array();
+            $attributes = array();
 
             // Create the data objects
-            foreach( $this->functions as $function ) 
+            foreach( $this->parserStruct['functions'] as $function ) 
             {
-                $functions[] = new plPhpFunction( $function[0], $function[1], $function[2] );                                    
+                // Create the needed parameter objects
+                $params = array();
+                foreach( $function[2] as $param) 
+                {
+                    $params[] = new plPhpFunctionParameter( $param );
+                }
+                $functions[] = new plPhpFunction( 
+                    $function[0],
+                    $function[1],
+                    $params
+                );                                    
             }
-            $class = new plPhpClass( $this->class, $this->variables, $functions, $this->implements, $this->extends );                              
+            foreach ( $this->parserStruct['attributes'] as $attribute ) 
+            {
+                $attributes[] = new plPhpAttribute( 
+                    $attribute[0],
+                    $attribute[1]
+                );
+            }
+            $class = new plPhpClass( 
+                $this->parserStruct['class'],
+                $attributes,
+                $functions,
+                $this->parserStruct['implements'],
+                $this->parserStruct['extends']
+            );                              
             
-            $this->classes[$this->class] = $class;
+            $this->classes[$this->parserStruct['class']] = $class;
         }
 
         $this->initParserAttributes();

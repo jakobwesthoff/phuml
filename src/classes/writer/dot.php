@@ -52,9 +52,9 @@ class plStructureDotWriter extends plStructureWriter
         $name = $o->name;
         
         $attributes = array();
-        foreach( $o->variables as $variable ) 
+        foreach( $o->attributes as $attribute ) 
         {
-            $attributes[] = $this->getModifierRepresentation( $variable->modifier ) . $variable->name;
+            $attributes[] = $this->getModifierRepresentation( $attribute->modifier ) . $attribute->name;
         }
 
         $functions = array();
