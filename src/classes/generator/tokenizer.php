@@ -25,11 +25,12 @@ class plStructureTokenizerGenerator extends plStructureGenerator
         $this->parserStruct = array( 
             'class'         => null,
             'interface'     => null,
+            'function'      => null,
             'attributes'    => array(),
             'functions'     => array(),
             'params'        => array(),
-            'implemens'     => array(),
-            'extends'       => array(),
+            'implements'    => array(),
+            'extends'       => null,
             'modifier'      => 'public',            
         );
 
@@ -560,7 +561,7 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             }
             $class->extends = array_key_exists( $class->extends, $this->classes ) 
                               ? $this->classes[$class->extends] 
-                              : $this->classes[$class->extends] = new plPhpClass( $class->extends );
+                              : ( $this->classes[$class->extends] = new plPhpClass( $class->extends ) );
         }
         foreach( $this->interfaces as $interface ) 
         {           
@@ -570,7 +571,7 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             }
             $interface->extends = array_key_exists( $interface->extends, $this->interfaces ) 
                                  ? $this->interfaces[$interface->extends] 
-                                 : $this->interfaces[$interface->extends] = new plPhpInterface( $interface->extends );
+                                 : ( $this->interfaces[$interface->extends] = new plPhpInterface( $interface->extends ) );
         }
     }
 }
