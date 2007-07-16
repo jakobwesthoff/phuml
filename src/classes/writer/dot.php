@@ -55,6 +55,20 @@ class plStructureDotWriter extends plStructureWriter
         foreach( $o->attributes as $attribute ) 
         {
             $attributes[] = $this->getModifierRepresentation( $attribute->modifier ) . $attribute->name;
+
+            // Create associations if the attribute type is set
+            if ( $attribute->type !== null && array_key_exists( $attribute->type, $this->structure ) ) 
+            {
+                $def .= $this->createNodeRelation( 
+                    $this->getUniqueId( $this->structure[$attribute->type] ),
+                    $this->getUniqueId( $o ),
+                    array( 
+                        'dir'       => 'back',
+                        'arrowtail' => 'none',
+                        'style'     => 'dashed',
+                    )
+                );
+            }
         }
 
         $functions = array();

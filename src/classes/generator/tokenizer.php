@@ -5,11 +5,6 @@ class plStructureTokenizerGenerator extends plStructureGenerator
     private $classes;
     private $interfaces;
 
-    /**
-     * parserStruct 
-     * 
-     * @var mixed
-     */
     private $parserStruct;
     private $lastToken;
 
@@ -25,11 +20,6 @@ class plStructureTokenizerGenerator extends plStructureGenerator
         $this->interfaces   = array();
     }
 
-    /**
-     * initParserAttributes 
-     * 
-     * @return void
-     */
     private function initParserAttributes() 
     {
         $this->parserStruct = array( 
@@ -175,9 +165,6 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             $this->storeClassOrInterface();
         }
 
-        /**
-         * inline in createStructure
-         */
         // Fix the class and interface connections
         $this->fixObjectConnections();
 
@@ -195,11 +182,6 @@ class plStructureTokenizerGenerator extends plStructureGenerator
         // Ignore opening brackets
     }
 
-    /**
-     * closing_bracket 
-     * 
-     * @return void
-     */
     private function closing_bracket() 
     {
         switch ( $this->lastToken ) 
@@ -569,9 +551,19 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             }
             foreach ( $this->parserStruct['attributes'] as $attribute ) 
             {
+                $type = null;
+                // If there is a docblock try to isolate the attribute type
+                if ( $attribute[2] !== null ) 
+                {
+                    if ( preg_match( '/^(?:\s|\*)*@var\s+([^ ]+).*$/m', $attribute[2], $matches ) );
+                    {
+                        $type = trim( $matches[1] );
+                    }
+                }
                 $attributes[] = new plPhpAttribute( 
                     $attribute[0],
-                    $attribute[1]
+                    $attribute[1],
+                    $type
                 );
             }
             $class = new plPhpClass( 
