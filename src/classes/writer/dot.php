@@ -11,7 +11,8 @@ class plStructureDotWriter extends plStructureWriter
     public function __construct() 
     {
         $this->properties = array( 
-            'style'          => plStructureDotWriterStyle::factory( 'default' ),
+            'style'                 => plStructureDotWriterStyle::factory( 'default' ),
+            'create_associations'   => true,
         );
 
         $this->structure = null;
@@ -55,6 +56,12 @@ class plStructureDotWriter extends plStructureWriter
         foreach( $o->attributes as $attribute ) 
         {
             $attributes[] = $this->getModifierRepresentation( $attribute->modifier ) . $attribute->name;
+
+            // Association creation is optional
+            if ( $this->create_associations === false ) 
+            {
+                continue;
+            }
 
             // Create associations if the attribute type is set
             if ( $attribute->type !== null && array_key_exists( $attribute->type, $this->structure ) ) 
