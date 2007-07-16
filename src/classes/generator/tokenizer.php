@@ -5,6 +5,11 @@ class plStructureTokenizerGenerator extends plStructureGenerator
     private $classes;
     private $interfaces;
 
+    /**
+     * parserStruct 
+     * 
+     * @var mixed
+     */
     private $parserStruct;
     private $lastToken;
 
@@ -20,6 +25,11 @@ class plStructureTokenizerGenerator extends plStructureGenerator
         $this->interfaces   = array();
     }
 
+    /**
+     * initParserAttributes 
+     * 
+     * @return void
+     */
     private function initParserAttributes() 
     {
         $this->parserStruct = array( 
@@ -32,6 +42,7 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             'implements'    => array(),
             'extends'       => null,
             'modifier'      => 'public',            
+            'docblock'      => null,
         );
 
         $this->lastToken = array();
@@ -146,9 +157,15 @@ class plStructureTokenizerGenerator extends plStructureGenerator
                             $this->t_private( $token );
                         break;
 
+                        case T_DOC_COMMENT:
+                            $this->t_doc_comment( $token );
+                        break;
+
                         default:
                             // Ignore everything else
                             $this->lastToken = null;                        
+                            // And reset the docblock
+                            $this->parserStruct['docblock'] = null;
                     }
                 }
             }
@@ -158,6 +175,9 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             $this->storeClassOrInterface();
         }
 
+        /**
+         * inline in createStructure
+         */
         // Fix the class and interface connections
         $this->fixObjectConnections();
 
@@ -175,6 +195,11 @@ class plStructureTokenizerGenerator extends plStructureGenerator
         // Ignore opening brackets
     }
 
+    /**
+     * closing_bracket 
+     * 
+     * @return void
+     */
     private function closing_bracket() 
     {
         switch ( $this->lastToken ) 
@@ -186,7 +211,8 @@ class plStructureTokenizerGenerator extends plStructureGenerator
                 $this->parserStruct['functions'][] = array(
                     $this->parserStruct['function'],
                     $this->parserStruct['modifier'],
-                    $this->parserStruct['params']
+                    $this->parserStruct['params'],
+                    $this->parserStruct['docblock']
                 );                           
                 // Reset the last token
                 $this->lastToken = null;
@@ -195,7 +221,9 @@ class plStructureTokenizerGenerator extends plStructureGenerator
                 // Reset the params array
                 $this->parserStruct['params'] = array();
                 // Reset the function name
-                $this->parserStruct['function'] = null;            
+                $this->parserStruct['function'] = null;
+                // Reset the docblock
+                $this->parserStruct['docblock'] = null;
             break;
             default:
                 $this->lastToken = null;
@@ -254,9 +282,14 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             case T_PROTECTED:
             case T_PRIVATE:
                 // A new class attribute
-                $this->parserStruct['attributes'][] = array( $token[1], $this->parserStruct['modifier'] );
+                $this->parserStruct['attributes'][] = array( 
+                    $token[1],
+                    $this->parserStruct['modifier'],
+                    $this->parserStruct['docblock'],
+                );
                 $this->lastToken = null;
                 $this->parserStruct['modifier'] = 'public';
+                $this->parserStruct['docblock'] = null;
             break;
             case T_FUNCTION:
                 // A new function parameter
@@ -464,6 +497,19 @@ class plStructureTokenizerGenerator extends plStructureGenerator
             break;
             default:
                 $this->lastToken = null;
+        }
+    }
+
+    private function t_doc_comment( $token ) 
+    {
+        switch ( $this->lastToken ) 
+        {
+            case null:
+                $this->parserStruct['docblock'] = $token[1];
+            break;
+            default:
+                $this->lastToken = null;
+                $this->parserStruct['docblock'] = null;
         }
     }
 
