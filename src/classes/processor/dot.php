@@ -1,6 +1,6 @@
 <?php
 
-class plStructureDotWriter extends plStructureWriter 
+class plDotProcessor extends plProcessor 
 {
     private $properties;
 
@@ -11,7 +11,7 @@ class plStructureDotWriter extends plStructureWriter
     public function __construct() 
     {
         $this->properties = array( 
-            'style'                 => plStructureDotWriterStyle::factory( 'default' ),
+            'style'                 => plDotProcessorStyle::factory( 'default' ),
             'create_associations'   => true,
         );
 
@@ -19,16 +19,28 @@ class plStructureDotWriter extends plStructureWriter
         $this->output = null;
     }
 
-    public function writeStructure( $structure ) 
+    public function getInputTypes() 
     {
-        $this->structure = $structure;
+        return array( 
+            'application/phuml-structure'
+        );
+    }
+
+    public function getOutputType() 
+    {
+        return 'text/dot';
+    }
+
+    public function process( $input, $type ) 
+    {
+        $this->structure = $input;
 
         $this->output = 'digraph "' . sha1( mt_rand() ) . '" {' . "\n";
         $this->output .= 'splines = true;' . "\n";
         $this->output .= 'overlap = false;' . "\n";
         $this->output .= 'mindist = 0.6;' . "\n";
 
-        foreach( $structure as $object ) 
+        foreach( $this->structure as $object ) 
         {
             if ( $object instanceof plPhpClass ) 
             {

@@ -5,12 +5,12 @@ class plPhuml
     private $properties;
     
     private $files;
+    private $processors;
 
     public function __construct() 
     {
         $this->properties = array( 
             'generator'     => plStructureGenerator::factory( 'tokenizer' ),
-            'writer'        => plStructureWriter::factory( 'dot' ),
         );
 
         $this->files = array();
@@ -50,12 +50,51 @@ class plPhuml
         }       
     }
 
+    public function addProcessor( $processor ) 
+    {
+        if ( count( $this->processors ) === 0 ) 
+        {
+            // First processor must support application/phuml-structure
+            if ( !in_array( 'application/phuml-structure', $processor->getInputTypes() ) ) 
+            {
+                throw new plPhumlInvalidProcessorChainException( 'application/phuml-structure', $processor->getInputTypes() );
+            }
+        }
+        else
+        {
+            $this->checkProcessorCompatibility( end( $this->processors ), $processor );
+
+        }
+        $this->processors[] = $processor;
+    }
+
+    private function checkProcessorCompatibility( $first, $second ) 
+    {
+        if ( !( $first instanceof plProcessor ) || !( $second instanceof plProcessor ) ) 
+        {
+            throw new plPhumlInvalidProcessorException();
+        }
+
+        if ( !in_array( $first->getOutputType(), $second->getInputTypes() ) ) 
+        {
+            throw new plPhumlInvalidProcessorChainException( $first->getOutputType(), $second->getInputTypes() );
+        }
+    }
+
     public function generate( $outfile ) 
     {
         $structure = $this->generator->createStructure( $this->files );
-        $output    = $this->writer->writeStructure( $structure );
+        
+        $temporary = array( $structure, 'application/phuml-structure' );
+        foreach( $this->processors as $processor ) 
+        {            
+            $temporary = array( 
+                $processor->process( $temporary[0], $temporary[1] ),
+                $processor->getOutputType(),
+            );
+        }
 
-        file_put_contents( $outfile, $output );
+        end( $this->processors )->writeToDisk( $temporary[0], $output );
     }
 
 

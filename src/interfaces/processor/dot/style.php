@@ -1,13 +1,13 @@
 <?php
 
-abstract class plStructureDotWriterStyle 
+abstract class plDotProcessorStyle 
 {
     public static function factory( $style ) 
     {
-        $classname = 'plStructureDotWriter' . ucfirst( $style ) . 'Style';
+        $classname = 'plDotProcessor' . ucfirst( $style ) . 'Style';
         if ( class_exists( $classname ) === false ) 
         {
-            throw new plStructureDotWriterStyleNotFoundException( $style );
+            throw new plDotProcessorStyleNotFoundException( $style );
         }
         return new $classname();
     }

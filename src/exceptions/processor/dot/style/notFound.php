@@ -1,6 +1,6 @@
 <?php
 
-class plStructureDotWriterStyleNotFoundException extends Exception
+class plDotProcessorStyleNotFoundException extends Exception
 {
     public function __construct( $style ) 
     {
