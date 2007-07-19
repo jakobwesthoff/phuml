@@ -17,7 +17,7 @@ abstract class plProcessor
         $processors = array();
         foreach( plBase::getAutoloadClasses() as $autoload ) 
         {
-            if ( preg_match( '@pl([A-Z][a-z]*)Processor@', $autoload, $matches ) === true ) 
+            if ( preg_match( '@^pl([A-Z][a-z]*)Processor$@', $autoload, $matches ) ) 
             {
                 $processors[] = $matches[1];
             }
