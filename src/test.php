@@ -6,6 +6,7 @@ $phuml = new plPhuml();
 
 $phuml->addDirectory( dirname( __FILE__ ) );
 $phuml->addProcessor( new plDotProcessor() );
-$phuml->generate( 'test.dot' );
+$phuml->addProcessor( new plNeatoProcessor() );
+$phuml->generate( 'testX.png' );
 
 ?>

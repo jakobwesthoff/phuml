@@ -11,5 +11,10 @@ return array(
     'plDotProcessorDefaultStyle'                    =>  'classes/processor/dot/style/default.php',
 
     'plDotProcessorStyleNotFoundException'          =>  'exceptions/processor/dot/style/notFound.php',
+
+    'plExternalCommandProcessor'                    =>  'interfaces/processor/externalCommand.php',
+    'plNeatoProcessor'                              =>  'classes/processor/neato.php',
+    'plNeatoProcessorExecutionException'            =>  'exceptions/processor/neato/execution.php',
 );
+
 ?>
