@@ -12,14 +12,27 @@ abstract class plProcessor
         return new $classname();
     }
 
+    public static function getProcessors() 
+    {
+        $processors = array();
+        foreach( plBase::getAutoloadClasses() as $autoload ) 
+        {
+            if ( preg_match( '@pl([A-Z][a-z]*)Processor@', $autoload, $matches ) === true ) 
+            {
+                $processors[] = $matches[1];
+            }
+        }
+        return $processors;
+    }
+
     public function writeToDisk( $input, $output ) 
     {
         file_put_contents( $output, $input );
     }
     
-    abstract function getInputTypes();
-    abstract function getOutputType();
-    abstract function process( $input, $type );
+    abstract public function getInputTypes();
+    abstract public function getOutputType();
+    abstract public function process( $input, $type );
 
 }
 

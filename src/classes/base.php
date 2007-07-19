@@ -27,6 +27,11 @@ class plBase
             }
         }
     }
+
+    public static function getAutoloadClasses() 
+    {
+        return array_keys( self::$autoload );
+    }
 }
 
 ?>
