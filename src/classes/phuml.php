@@ -94,7 +94,7 @@ class plPhuml
             );
         }
 
-        end( $this->processors )->writeToDisk( $temporary[0], $output );
+        end( $this->processors )->writeToDisk( $temporary[0], $outfile );
     }
 
 
