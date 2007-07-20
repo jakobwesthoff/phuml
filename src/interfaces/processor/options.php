@@ -8,7 +8,7 @@ abstract class plProcessorOptions
     {
         if ( !array_key_exists( $key, $this->properties ) )
         {
-            throw new plBasePropertyException( $key, plBasePropertyException::READ );
+            throw new plProcessorOptionException( $key, plProcessorOptionException::READ );
         }
         return $this->properties[$key];
     }
@@ -17,7 +17,7 @@ abstract class plProcessorOptions
     {
         if ( !array_key_exists( $key, $this->properties ) )
         {
-            throw new plBasePropertyException( $key, plBasePropertyException::WRITE );
+            throw new plProcessorOptionException( $key, plProcessorOptionException::WRITE );
         }
         $this->properties[$key] = $val;            
     }

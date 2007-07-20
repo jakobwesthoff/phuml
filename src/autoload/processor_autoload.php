@@ -4,6 +4,8 @@ return array(
 
     'plProcessor'                                   =>  'interfaces/processor.php',
     'plProcessorOptions'                            =>  'interfaces/processor/options.php',
+    'plProcessorOptionException'                    =>  'exceptions/processor/option.php',
+
     'plDotProcessor'                                =>  'classes/processor/dot.php',
     'plDotProcessorOptions'                         =>  'classes/processor/dot/options.php',
 
