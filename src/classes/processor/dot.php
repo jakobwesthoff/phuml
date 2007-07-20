@@ -8,15 +8,14 @@ class plDotProcessor extends plProcessor
 
     private $structure;
 
+    public $options;
+
     public function __construct() 
     {
-        $this->properties = array( 
-            'style'                 => plDotProcessorStyle::factory( 'default' ),
-            'create_associations'   => true,
-        );
+        $this->options   = new plDotProcessorOptions();
 
         $this->structure = null;
-        $this->output = null;
+        $this->output    = null;
     }
 
     public function getInputTypes() 
@@ -35,7 +34,7 @@ class plDotProcessor extends plProcessor
     {
         $this->structure = $input;
 
-        $this->output = 'digraph "' . sha1( mt_rand() ) . '" {' . "\n";
+        $this->output  = 'digraph "' . sha1( mt_rand() ) . '" {' . "\n";
         $this->output .= 'splines = true;' . "\n";
         $this->output .= 'overlap = false;' . "\n";
         $this->output .= 'mindist = 0.6;' . "\n";
@@ -70,7 +69,7 @@ class plDotProcessor extends plProcessor
             $attributes[] = $this->getModifierRepresentation( $attribute->modifier ) . $attribute->name;
 
             // Association creation is optional
-            if ( $this->create_associations === false ) 
+            if ( $this->options->createAssociations === false ) 
             {
                 continue;
             }
@@ -256,29 +255,29 @@ class plDotProcessor extends plProcessor
         $label = '<<TABLE CELLSPACING="0" BORDER="0" ALIGN="LEFT">';
         
         // The title
-        $label .= '<TR><TD BORDER="' . $this->style->interfaceTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->style->interfaceTitleBackground . '"><FONT COLOR="' . $this->style->interfaceTitleColor . '" FACE="' . $this->style->interfaceTitleFont . '" POINT-SIZE="' . $this->style->interfaceTitleFontsize . '">' . $name . '</FONT></TD></TR>';
+        $label .= '<TR><TD BORDER="' . $this->options->style->interfaceTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->options->style->interfaceTitleBackground . '"><FONT COLOR="' . $this->options->style->interfaceTitleColor . '" FACE="' . $this->options->style->interfaceTitleFont . '" POINT-SIZE="' . $this->options->style->interfaceTitleFontsize . '">' . $name . '</FONT></TD></TR>';
 
         // The attributes block
-        $label .= '<TR><TD BORDER="' . $this->style->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->interfaceAttributesBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->options->style->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->options->style->interfaceAttributesBackground . '">';
         if ( count( $attributes ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $attributes as $attribute ) 
         {
-            $label .= '<FONT COLOR="' . $this->style->interfaceAttributesColor . '" FACE="' . $this->style->interfaceAttributesFont . '" POINT-SIZE="' . $this->style->interfaceAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->options->style->interfaceAttributesColor . '" FACE="' . $this->options->style->interfaceAttributesFont . '" POINT-SIZE="' . $this->options->style->interfaceAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
         // The function block
-        $label .= '<TR><TD BORDER="' . $this->style->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->interfaceFunctionsBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->options->style->interfaceTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->options->style->interfaceFunctionsBackground . '">';
         if ( count( $functions ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $functions as $function ) 
         {
-            $label .= '<FONT COLOR="' . $this->style->interfaceFunctionsColor . '" FACE="' . $this->style->interfaceFunctionsFont . '" POINT-SIZE="' . $this->style->interfaceFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->options->style->interfaceFunctionsColor . '" FACE="' . $this->options->style->interfaceFunctionsFont . '" POINT-SIZE="' . $this->options->style->interfaceFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
@@ -294,29 +293,29 @@ class plDotProcessor extends plProcessor
         $label = '<<TABLE CELLSPACING="0" BORDER="0" ALIGN="LEFT">';
         
         // The title
-        $label .= '<TR><TD BORDER="' . $this->style->classTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->style->classTitleBackground . '"><FONT COLOR="' . $this->style->classTitleColor . '" FACE="' . $this->style->classTitleFont . '" POINT-SIZE="' . $this->style->classTitleFontsize . '">' . $name . '</FONT></TD></TR>';
+        $label .= '<TR><TD BORDER="' . $this->options->style->classTableBorder . '" ALIGN="CENTER" BGCOLOR="' . $this->options->style->classTitleBackground . '"><FONT COLOR="' . $this->options->style->classTitleColor . '" FACE="' . $this->options->style->classTitleFont . '" POINT-SIZE="' . $this->options->style->classTitleFontsize . '">' . $name . '</FONT></TD></TR>';
 
         // The attributes block
-        $label .= '<TR><TD BORDER="' . $this->style->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->classAttributesBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->options->style->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->options->style->classAttributesBackground . '">';
         if ( count( $attributes ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $attributes as $attribute ) 
         {
-            $label .= '<FONT COLOR="' . $this->style->classAttributesColor . '" FACE="' . $this->style->classAttributesFont . '" POINT-SIZE="' . $this->style->classAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->options->style->classAttributesColor . '" FACE="' . $this->options->style->classAttributesFont . '" POINT-SIZE="' . $this->options->style->classAttributesFontsize . '">' . $attribute . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
         // The function block
-        $label .= '<TR><TD BORDER="' . $this->style->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->style->classFunctionsBackground . '">';
+        $label .= '<TR><TD BORDER="' . $this->options->style->classTableBorder . '" ALIGN="LEFT" BGCOLOR="' . $this->options->style->classFunctionsBackground . '">';
         if ( count( $functions ) === 0 ) 
         {
             $label .= ' ';
         }
         foreach( $functions as $function ) 
         {
-            $label .= '<FONT COLOR="' . $this->style->classFunctionsColor . '" FACE="' . $this->style->classFunctionsFont . '" POINT-SIZE="' . $this->style->classFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
+            $label .= '<FONT COLOR="' . $this->options->style->classFunctionsColor . '" FACE="' . $this->options->style->classFunctionsFont . '" POINT-SIZE="' . $this->options->style->classFunctionsFontsize . '">' . $function . '</FONT><BR ALIGN="LEFT"/>';
         }
         $label .= '</TD></TR>';
 
@@ -324,24 +323,6 @@ class plDotProcessor extends plProcessor
         $label .= '</TABLE>>';
 
         return $label;
-    }
-
-    public function __get( $key )
-    {
-        if ( !array_key_exists( $key, $this->properties ) )
-        {
-            throw new plBasePropertyException( $key, plBasePropertyException::READ );
-        }
-        return $this->properties[$key];
-    }
-
-    public function __set( $key, $val )
-    {
-        if ( !array_key_exists( $key, $this->properties ) )
-        {
-            throw new plBasePropertyException( $key, plBasePropertyException::WRITE );
-        }
-        $this->properties[$key] = $val;            
     }
 }
 

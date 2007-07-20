@@ -3,7 +3,9 @@
 return array( 
 
     'plProcessor'                                   =>  'interfaces/processor.php',
+    'plProcessorOptions'                            =>  'interfaces/processor/options.php',
     'plDotProcessor'                                =>  'classes/processor/dot.php',
+    'plDotProcessorOptions'                         =>  'classes/processor/dot/options.php',
 
     'plProcessorNotFoundException'                  =>  'exceptions/processor/notFound.php',
 
