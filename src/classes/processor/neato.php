@@ -24,7 +24,7 @@ class plNeatoProcessor extends plExternalCommandProcessor
 
         if ( $return !== 0 ) 
         {
-            throw new plNeatoProcessorExecutionException( $output );
+            throw new plProcessorExternalExecutionException( $output );
         }
     }
 }

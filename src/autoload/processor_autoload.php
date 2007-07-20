@@ -14,7 +14,7 @@ return array(
 
     'plExternalCommandProcessor'                    =>  'interfaces/processor/externalCommand.php',
     'plNeatoProcessor'                              =>  'classes/processor/neato.php',
-    'plNeatoProcessorExecutionException'            =>  'exceptions/processor/neato/execution.php',
+    'plProcessorExternalExecutionException'         =>  'exceptions/processor/externalExecution.php',
 );
 
 ?>
