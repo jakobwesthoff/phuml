@@ -14,7 +14,7 @@ class plDotProcessorOptions extends plProcessorOptions
     {
         if ( !array_key_exists( $key, $this->properties ) )
         {
-            throw new plBasePropertyException( $key, plBasePropertyException::WRITE );
+            throw new plProcessorOptionException( $key, plProcessorOptionException::WRITE );
         }
 
         switch( $key ) 
