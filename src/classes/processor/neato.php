@@ -2,6 +2,13 @@
 
 class plNeatoProcessor extends plExternalCommandProcessor 
 {
+    public $options;
+
+    public function __construct() 
+    {
+        $this->options = new plProcessorOptions();
+    }
+
     public function getInputTypes() 
     {
         return array( 

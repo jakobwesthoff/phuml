@@ -1,6 +1,6 @@
 <?php
 
-abstract class plProcessorOptions 
+class plProcessorOptions 
 {
     protected $properties = array();
 

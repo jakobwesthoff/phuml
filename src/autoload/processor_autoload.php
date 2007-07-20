@@ -3,7 +3,7 @@
 return array( 
 
     'plProcessor'                                   =>  'interfaces/processor.php',
-    'plProcessorOptions'                            =>  'interfaces/processor/options.php',
+    'plProcessorOptions'                            =>  'classes/processor/options.php',
     'plProcessorOptionException'                    =>  'exceptions/processor/option.php',
 
     'plDotProcessor'                                =>  'classes/processor/dot.php',

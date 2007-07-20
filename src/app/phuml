@@ -6,7 +6,7 @@ require_once( dirname( __FILE__ ) . '/../config/config.php' );
 function showHeader() 
 {
     echo <<<HEADER
-phUML Version 0.1 (Jakob Westhoff <jakob@php.net>)
+phUML Version 0.2 (Jakob Westhoff <jakob@php.net>)
 
 HEADER;
 }
@@ -14,98 +14,164 @@ HEADER;
 function showUsage() 
 {
     echo <<<USAGE
-Usage: phuml [OPTIONS] <FILE|DIRECTORY> ... <OUTFILE>
+Usage: phuml [-h|-l] [OPTIONS] <DIRECTORY> <PROCESSOR> [PROCESSOR OPTIONS] ... <OUTFILE>
+
+Commands:
+    -h      Display this help text
+    -l      List all available processors
 
 Options: 
-    -g      The structure generator to use (default: tokenizer)
-    -w      The structure writer to use (default: dot)    
-    -r      Scan given directories recursively
+    -r      Scan given directorie recursively
 
-Writer options:
- Dot writer:
-    -s      The style to use for output (default: default)
+Example:
+    phuml -r ./ -dot -createAssociations false -neato out.png
 
+    This example will scan the current directory recursively for php files.
+    Send them to the "dot" processor which will process them with the option
+    "createAssociations" set to false. After that it will be send to the neato
+    processor and saved to the file out.png
 
 USAGE;
 }
 
-showHeader();
-
-$options = getopt( 'g:w:r' );
-$optionCount =   ( isset( $options['g'] ) ? 2 : 0 ) 
-               + ( isset( $options['w'] ) ? 2 : 0 ) 
-               + ( isset( $options['r'] ) ? 1 : 0 );
-
-$argv = array_slice( $argv, $optionCount  + 1 );
-$argc = count( $argv );
-
-// Initialize default values
-$generator = 'tokenizer';
-$writer    = 'dot';
-
-if ( isset( $options['g'] ) === true ) 
+function showProcessorList() 
 {
-    $generator = $options['g'];
-}
-
-if ( isset( $options['w'] ) === true ) 
-{
-    $writer = $options['w'];
-}
-
-$phuml = new plPhuml();
-$phuml->writer    = plStructureWriter::factory( $writer );
-$phuml->generator = plStructureGenerator::factory( $generator );
-$recursive        = ( isset( $options['r'] ) === true ); 
-
-// writer specific options
-if ( strtolower( $writer ) === 'dot' ) 
-{
-    // default style
-    $style = 'default';
-
-    $options = getopt( 's:' );
-    $optionCount = ( isset( $options['s'] ) ? 2 : 0 );
-
-    $argv = array_slice( $argv, $optionCount );
-    $argc = count( $argv );
-
-    if ( isset( $options['s'] ) === true ) 
+    echo "The following processors are available:\n";
+    foreach( plProcessor::getProcessors() as $processor ) 
     {
-        $style = $options['s'];
+        echo "    " . $processor . "\n";
+    }
+}
+
+function updateArguments( $count ) 
+{
+    global $argc, $argv;
+
+    $argv = array_slice( $argv, $count );
+    $argc = count( $argv );
+}
+
+function cmdActions() 
+{
+    global $argc, $argv;
+
+    if ( strtolower( $argv[0] ) === '-h' ) 
+    {
+        showUsage();
+        exit( 1 );
+    }
+    else if ( strtolower( $argv[0] ) === '-l' ) 
+    {
+        showProcessorList();
+        exit( 0 );
+    }
+}
+
+function cmdOptions() 
+{
+    global $argc, $argv;    
+    global $recursive;
+
+    if ( strtolower( $argv[0] ) === '-r' ) 
+    {
+        $recursive = true;
+        updateArguments( 1 );
+    }
+}
+
+function cmdDirOrFile() 
+{
+    global $argc, $argv;
+    global $phuml, $recursive;
+
+    if ( is_dir( $argv[0] ) ) 
+    {
+        $phuml->addDirectory( $argv[0], 'php', $recursive );
+        updateArguments( 1 );
+    }
+    else
+    {
+        showUsage();
+        exit( 1 );
+    }
+}
+
+function cmdProcessor() 
+{
+    global $argc, $argv;
+    global $phuml;
+
+    if ( substr( $argv[0], 0, 1 ) !== '-' ) 
+    {
+        showUsage();
+        exit( 1 );
+    }
+    
+    // We do not need to check for correct options here, because the option
+    // will throw an exception if there is something wrong
+
+    $processor = plProcessor::factory( 
+        substr( $argv[0], 1 ) 
+    );
+
+    updateArguments( 1 );
+
+    while( $argc > 1 && !in_array( ucfirst( $option = substr( $argv[0], 1 ) ), plProcessor::getProcessors() ) ) 
+    {
+        $processor->options->$option = $argv[1];
+        updateArguments( 2 );
     }
 
-    $phuml->writer->style = plStructureDotWriterStyle::factory( $style );
+    $phuml->addProcessor( $processor );
 }
 
+function cmdOutFile() 
+{
+    global $argc, $argv;
+    global $outfile;
+
+    $outfile = $argv[0];
+    updateArguments( 1 );
+}
+
+showHeader();
+
+// The absolute minimum of parameters is 2
 if ( $argc < 2 ) 
 {
     showUsage();
     exit( 1 );
 }
 
-for ( $i = 0; $i < $argc - 1; $i++ ) 
+$recursive = false;
+$outfile   = 'out';
+
+$phuml            = new plPhuml();
+$phuml->generator = plStructureGenerator::factory( 'tokenizer' );
+
+// Remove the application name
+updateArguments( 1 );
+
+try 
 {
-    if ( is_dir( $argv[$i] ) === true )  
+    cmdActions();
+    cmdOptions();
+    cmdDirOrFile();
+    while( $argc > 1 ) 
     {
-        $phuml->addDirectory( $argv[$i], 'php', $recursive );         
-    } 
-    else if ( is_file( $argv[$i] ) === true ) 
-    {
-        $phuml->addFile( $argv[$i] );
+        cmdProcessor();
     }
-}
+    cmdOutFile();
 
-if ( file_exists( $argv[$argc - 1] ) === true ) 
+    $phuml->generate( $outfile );
+
+    echo 'Structure sucessfully generated.', "\n";
+}
+catch ( Exception $e ) 
 {
-    echo 'The output file "', $argv[$argc - 1], '" already exists. Operation aborted.', "\n";
-    exit( 2 );
+    echo 'A fatal error occured during processing:', "\n";
+    echo $e->getMessage(), "\n";
 }
 
-echo 'Generating structure file "', $argv[$argc - 1], '" ...', "\n";
-
-$phuml->generate( $argv[$argc - 1] );
-
-echo 'Structure sucessfully generated.', "\n";
 
 ?>
