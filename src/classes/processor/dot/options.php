@@ -26,7 +26,7 @@ class plDotProcessorOptions extends plProcessorOptions
                 $this->properties[$key]['data'] = plDotProcessorStyle::factory( (string)$val );
             break;
             case 'createAssociations':
-                $this->properties[$key]['data'] = (bool)$val;
+                $this->properties[$key]['data'] = ( $val === '0' || $val === 'false' ) ? false : true;
             break;
             default:
                 throw new plProcessorOptionException( $key, plProcessorOptionException::WRITE );

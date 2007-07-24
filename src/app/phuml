@@ -206,7 +206,7 @@ try
     }
     cmdOutFile();
 
-    echo 'Processing... (This may take a long time)', "\n";
+    echo 'Processing... (This may take some time)', "\n";
 
     $phuml->generate( $outfile );
 
