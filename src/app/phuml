@@ -31,15 +31,58 @@ Example:
     "createAssociations" set to false. After that it will be send to the neato
     processor and saved to the file out.png
 
+
 USAGE;
 }
 
 function showProcessorList() 
 {
-    echo "The following processors are available:\n";
+    echo "The following processors are available:\n\n";
     foreach( plProcessor::getProcessors() as $processor ) 
     {
-        echo "    " . $processor . "\n";
+        echo "* Processor: ", $processor, "\n";
+        echo "  - Options:", "\n";
+        
+        $class = 'pl' . $processor . 'Processor';
+        $p = new $class();
+        $o = $p->options;
+
+        if ( count( $o->getOptions() ) === 0 ) 
+        {
+            echo "    This processor does not have any options.", "\n\n";
+            continue;
+        }
+        
+        foreach ( $o->getOptions() as $option ) 
+        {
+            echo "    ", $option, ' (', getOptionTypeRepresentation( $o->getOptionType( $option ) ), '):', "\n";
+            
+            // Get the description as an word wrapped array to add the padding
+            $description = explode( "\n", wordwrap( $o->getOptionDescription( $option ), 73, "\n", true ) );
+            foreach( $description as $descriptionLine ) 
+            {
+                echo "      ", $descriptionLine, "\n";
+            }
+            echo "\n";
+        }
+    }
+}
+
+function getOptionTypeRepresentation( $type ) 
+{
+    switch ( $type ) 
+    {
+        case plProcessorOptions::BOOL:
+            return 'boolean';
+        break;
+        case plProcessorOptions::STRING:
+            return 'string';
+        break;
+        case plProcessorOptions::DECIMAL:
+            return 'decimal';
+        break;
+        default:
+            return 'unknown type';
     }
 }
 
@@ -117,7 +160,7 @@ function cmdProcessor()
     updateArguments( 1 );
 
     while( $argc > 1 && !in_array( ucfirst( $option = substr( $argv[0], 1 ) ), plProcessor::getProcessors() ) ) 
-    {
+    {        
         $processor->options->$option = $argv[1];
         updateArguments( 2 );
     }
@@ -169,7 +212,7 @@ try
 }
 catch ( Exception $e ) 
 {
-    echo 'A fatal error occured during processing:', "\n";
+    echo 'A fatal error occured during the process:', "\n";
     echo $e->getMessage(), "\n";
 }
 
