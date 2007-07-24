@@ -206,9 +206,11 @@ try
     }
     cmdOutFile();
 
+    echo 'Processing... (This may take a long time)', "\n";
+
     $phuml->generate( $outfile );
 
-    echo 'Structure sucessfully generated.', "\n";
+    echo 'Processing sucessfully accomplished.', "\n";
 }
 catch ( Exception $e ) 
 {
