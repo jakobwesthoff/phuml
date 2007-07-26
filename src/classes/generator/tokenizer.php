@@ -555,8 +555,8 @@ class plStructureTokenizerGenerator extends plStructureGenerator
                 // If there is a docblock try to isolate the attribute type
                 if ( $attribute[2] !== null ) 
                 {
-                    if ( preg_match( '/^(?:\s|\*)*@var\s+([^ ]+).*$/m', $attribute[2], $matches ) );
-                    {
+                    if ( $return = preg_match( '/^[\s*]*@var\s+(\S+).*$/m', $attribute[2], $matches ) )
+                    {                        
                         $type = trim( $matches[1] );
                     }
                 }
