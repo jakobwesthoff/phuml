@@ -6,15 +6,15 @@ return array(
     'plProcessorOptions'                            =>  'classes/processor/options.php',
     'plProcessorOptionException'                    =>  'exceptions/processor/option.php',
 
-    'plDotProcessor'                                =>  'classes/processor/dot.php',
-    'plDotProcessorOptions'                         =>  'classes/processor/dot/options.php',
+    'plGraphvizProcessor'                           =>  'classes/processor/graphviz.php',
+    'plGraphvizProcessorOptions'                    =>  'classes/processor/graphviz/options.php',
 
     'plProcessorNotFoundException'                  =>  'exceptions/processor/notFound.php',
 
-    'plDotProcessorStyle'                           =>  'interfaces/processor/dot/style.php',
-    'plDotProcessorDefaultStyle'                    =>  'classes/processor/dot/style/default.php',
+    'plGraphvizProcessorStyle'                      =>  'interfaces/processor/graphviz/style.php',
+    'plGraphvizProcessorDefaultStyle'               =>  'classes/processor/graphviz/style/default.php',
 
-    'plDotProcessorStyleNotFoundException'          =>  'exceptions/processor/dot/style/notFound.php',
+    'plGraphvizProcessorStyleNotFoundException'     =>  'exceptions/processor/graphviz/style/notFound.php',
 
     'plExternalCommandProcessor'                    =>  'interfaces/processor/externalCommand.php',
     'plNeatoProcessor'                              =>  'classes/processor/neato.php',

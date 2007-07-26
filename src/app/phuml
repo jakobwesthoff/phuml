@@ -24,7 +24,7 @@ Options:
     -r      Scan given directorie recursively
 
 Example:
-    phuml -r ./ -dot -createAssociations false -neato out.png
+    phuml -r ./ -graphviz -createAssociations false -neato out.png
 
     This example will scan the current directory recursively for php files.
     Send them to the "dot" processor which will process them with the option
