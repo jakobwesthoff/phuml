@@ -64,10 +64,9 @@ class plGraphvizProcessor extends plProcessor
         $name = $o->name;
         
         $attributes = array();
+        $associations = array();
         foreach( $o->attributes as $attribute ) 
         {
-            $associations = array();
-
             $attributes[] = $this->getModifierRepresentation( $attribute->modifier ) . $attribute->name;
 
             // Association creation is optional
@@ -77,7 +76,7 @@ class plGraphvizProcessor extends plProcessor
             }
 
             // Create associations if the attribute type is set
-            if ( $attribute->type !== null && array_key_exists( $attribute->type, $this->structure ) && !array_key_exists( $attribute->type, $associations ) ) 
+            if ( $attribute->type !== null && array_key_exists( $attribute->type, $this->structure ) && !array_key_exists( strtolower( $attribute->type ), $associations ) ) 
             {
                 $def .= $this->createNodeRelation( 
                     $this->getUniqueId( $this->structure[$attribute->type] ),
@@ -88,7 +87,7 @@ class plGraphvizProcessor extends plProcessor
                         'style'     => 'dashed',
                     )
                 );
-                $associations[$attribute->type] = true;
+                $associations[strtolower( $attribute->type )] = true;
             }
         }
 

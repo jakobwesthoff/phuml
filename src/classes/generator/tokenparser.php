@@ -1,6 +1,6 @@
 <?php
 
-class plStructureTokenizerGenerator extends plStructureGenerator 
+class plStructureTokenparserGenerator extends plStructureGenerator 
 {
     private $classes;
     private $interfaces;

@@ -10,7 +10,7 @@ class plPhuml
     public function __construct() 
     {
         $this->properties = array( 
-            'generator'     => plStructureGenerator::factory( 'tokenizer' ),
+            'generator'     => plStructureGenerator::factory( 'tokenparser' ),
         );
 
         $this->files = array();

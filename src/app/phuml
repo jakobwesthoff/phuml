@@ -190,7 +190,7 @@ $recursive = false;
 $outfile   = 'out';
 
 $phuml            = new plPhuml();
-$phuml->generator = plStructureGenerator::factory( 'tokenizer' );
+$phuml->generator = plStructureGenerator::factory( 'tokenparser' );
 
 // Remove the application name
 updateArguments( 1 );

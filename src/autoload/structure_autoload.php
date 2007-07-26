@@ -2,7 +2,9 @@
 
 return array( 
     'plStructureGenerator'                          =>  'interfaces/generator.php',
-    'plStructureTokenizerGenerator'                 =>  'classes/generator/tokenizer.php',
+    'plStructureTokenparserGenerator'               =>  'classes/generator/tokenparser.php',
+
+    'plStructureGeneratorNotFoundException'         =>  'exceptions/generator/notFound.php',
 );
 
 ?>
