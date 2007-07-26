@@ -19,6 +19,7 @@ return array(
     'plExternalCommandProcessor'                    =>  'interfaces/processor/externalCommand.php',
     'plNeatoProcessor'                              =>  'classes/processor/neato.php',
     'plDotProcessor'                                =>  'classes/processor/dot.php',
+    'plStatisticsProcessor'                         =>  'classes/processor/statistics.php',
     'plProcessorExternalExecutionException'         =>  'exceptions/processor/externalExecution.php',
 );
 

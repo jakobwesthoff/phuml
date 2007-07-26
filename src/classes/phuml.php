@@ -84,6 +84,7 @@ class plPhuml
     public function generate( $outfile ) 
     {
         $structure = $this->generator->createStructure( $this->files );
+        echo "Structure generated.\n";
         
         $temporary = array( $structure, 'application/phuml-structure' );
         foreach( $this->processors as $processor ) 
