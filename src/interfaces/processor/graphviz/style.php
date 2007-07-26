@@ -1,13 +1,13 @@
 <?php
 
-abstract class plDotProcessorStyle 
+abstract class plGraphvizProcessorStyle 
 {
     public static function factory( $style ) 
     {
-        $classname = 'plDotProcessor' . ucfirst( $style ) . 'Style';
+        $classname = 'plGraphvizProcessor' . ucfirst( $style ) . 'Style';
         if ( class_exists( $classname ) === false ) 
         {
-            throw new plDotProcessorStyleNotFoundException( $style );
+            throw new plGraphvizProcessorStyleNotFoundException( $style );
         }
         return new $classname();
     }

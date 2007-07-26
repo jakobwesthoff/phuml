@@ -1,12 +1,12 @@
 <?php
 
-class plDotProcessorOptions extends plProcessorOptions 
+class plGraphvizProcessorOptions extends plProcessorOptions 
 {    
     public function __construct() 
     {
         $this->properties = array( 
             'style'                 =>  array( 
-                'data'          => plDotProcessorStyle::factory( 'default' ),
+                'data'          => plGraphvizProcessorStyle::factory( 'default' ),
                 'type'          => self::STRING,
                 'description'   => 'Style to use for the dot creation'
             ),
@@ -23,7 +23,7 @@ class plDotProcessorOptions extends plProcessorOptions
         switch( $key ) 
         {
             case 'style':
-                $this->properties[$key]['data'] = plDotProcessorStyle::factory( (string)$val );
+                $this->properties[$key]['data'] = plGraphvizProcessorStyle::factory( (string)$val );
             break;
             case 'createAssociations':
                 $this->properties[$key]['data'] = ( $val === '0' || $val === 'false' ) ? false : true;

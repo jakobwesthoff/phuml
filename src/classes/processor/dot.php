@@ -1,6 +1,6 @@
 <?php
 
-class plDotProcessor extends plProcessor 
+class plGraphvizProcessor extends plProcessor 
 {
     private $properties;
 
@@ -12,7 +12,7 @@ class plDotProcessor extends plProcessor
 
     public function __construct() 
     {
-        $this->options   = new plDotProcessorOptions();
+        $this->options   = new plGraphvizProcessorOptions();
 
         $this->structure = null;
         $this->output    = null;
@@ -66,6 +66,8 @@ class plDotProcessor extends plProcessor
         $attributes = array();
         foreach( $o->attributes as $attribute ) 
         {
+            $associations = array();
+
             $attributes[] = $this->getModifierRepresentation( $attribute->modifier ) . $attribute->name;
 
             // Association creation is optional
@@ -75,7 +77,7 @@ class plDotProcessor extends plProcessor
             }
 
             // Create associations if the attribute type is set
-            if ( $attribute->type !== null && array_key_exists( $attribute->type, $this->structure ) ) 
+            if ( $attribute->type !== null && array_key_exists( $attribute->type, $this->structure ) && !array_key_exists( $attribute->type, $associations ) ) 
             {
                 $def .= $this->createNodeRelation( 
                     $this->getUniqueId( $this->structure[$attribute->type] ),
@@ -86,6 +88,7 @@ class plDotProcessor extends plProcessor
                         'style'     => 'dashed',
                     )
                 );
+                $associations[$attribute->type] = true;
             }
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-class plDotProcessorStyleNotFoundException extends Exception
+class plGraphvizProcessorStyleNotFoundException extends Exception
 {
     public function __construct( $style ) 
     {
