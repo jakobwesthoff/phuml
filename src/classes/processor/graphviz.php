@@ -120,7 +120,7 @@ class plGraphvizProcessor extends plProcessor
                 $this->getUniqueId( $o ),
                 array( 
                     'dir'       => 'back',
-                    'arrowtail' => 'normal',
+                    'arrowtail' => 'empty',
                     'style'     => 'solid'
                 )
             );
@@ -140,7 +140,7 @@ class plGraphvizProcessor extends plProcessor
                 $this->getUniqueId( $o ),
                 array( 
                     'dir'       => 'back',
-                    'arrowtail' => 'empty',
+                    'arrowtail' => 'normal',
                     'style'     => 'dashed',
                 )
             );
@@ -185,7 +185,7 @@ class plGraphvizProcessor extends plProcessor
                 $this->getUniqueId( $o ),
                 array( 
                     'dir'       => 'back',
-                    'arrowtail' => 'normal',
+                    'arrowtail' => 'empty',
                     'style'     => 'solid'
                 )
             );
