@@ -206,11 +206,9 @@ try
     }
     cmdOutFile();
 
-    echo 'Processing... (This may take some time)', "\n";
+    echo '[|] Running... (This may take some time)', "\n";
 
     $phuml->generate( $outfile );
-
-    echo 'Processing sucessfully accomplished.', "\n";
 }
 catch ( Exception $e ) 
 {

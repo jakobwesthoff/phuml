@@ -83,18 +83,26 @@ class plPhuml
 
     public function generate( $outfile ) 
     {
+        echo "[|] Parsing class structure", "\n";
         $structure = $this->generator->createStructure( $this->files );
-        echo "Structure generated.\n";
         
         $temporary = array( $structure, 'application/phuml-structure' );
         foreach( $this->processors as $processor ) 
         {            
+            preg_match( 
+                '@^pl([A-Z][a-z]*)Processor$@',
+                get_class( $processor ),
+                $matches
+            );
+
+            echo "[|] Running '" . $matches[1] . "' processor", "\n";
             $temporary = array( 
                 $processor->process( $temporary[0], $temporary[1] ),
                 $processor->getOutputType(),
             );
         }
 
+        echo "[|] Writing generated data to disk", "\n";
         end( $this->processors )->writeToDisk( $temporary[0], $outfile );
     }
 
