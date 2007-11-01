@@ -555,8 +555,14 @@ class plStructureTokenparserGenerator extends plStructureGenerator
                 // If there is a docblock try to isolate the attribute type
                 if ( $attribute[2] !== null ) 
                 {
-                    if ( $return = preg_match( '/^[\s*]*@var\s+(\S+).*$/m', $attribute[2], $matches ) )
-                    {                        
+                    // Regular expression that extracts types in array annotations
+                    $regexp = '/^[\s*]*@var\s+array\(\s*(\w+\s*=>\s*)?(\w+)\s*\).*$/m';
+                    if ( preg_match( $regexp, $attribute[2], $matches ) )
+                    {
+                        $type = $matches[2];
+                    }
+                    else if ( $return = preg_match( '/^[\s*]*@var\s+(\S+).*$/m', $attribute[2], $matches ) )
+                    {
                         $type = trim( $matches[1] );
                     }
                 }
