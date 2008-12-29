@@ -28,6 +28,7 @@ class plStructureTokenparserGenerator extends plStructureGenerator
             'function'      => null,
             'attributes'    => array(),
             'functions'     => array(),
+            'typehint'      => null,
             'params'        => array(),
             'implements'    => array(),
             'extends'       => null,
@@ -174,7 +175,8 @@ class plStructureTokenparserGenerator extends plStructureGenerator
 
     private function comma() 
     {
-        // Ignore commas
+        // Reset typehints on each comma
+        $this->parserStruct['typehint'] = null;
     }
 
     private function opening_bracket() 
@@ -202,6 +204,7 @@ class plStructureTokenparserGenerator extends plStructureGenerator
                 $this->parserStruct['modifier'] = 'public';
                 // Reset the params array
                 $this->parserStruct['params'] = array();
+                $this->parserStruct['typehint'] = null;
                 // Reset the function name
                 $this->parserStruct['function'] = null;
                 // Reset the docblock
@@ -275,7 +278,10 @@ class plStructureTokenparserGenerator extends plStructureGenerator
             break;
             case T_FUNCTION:
                 // A new function parameter
-                $this->parserStruct['params'][] = $token[1];
+                $this->parserStruct['params'][] = array( 
+                    $this->parserStruct['typehint'], 
+                    $token[1]
+                );
             break;
         }
     }
@@ -361,7 +367,13 @@ class plStructureTokenparserGenerator extends plStructureGenerator
                 // Because if we know the function name already this is a type hint
                 if ( $this->parserStruct['function'] === null ) 
                 {
+                    // Function name
                     $this->parserStruct['function'] = $token[1];                           
+                }
+                else 
+                {
+                    // Type hint
+                    $this->parserStruct['typehint'] = $token[1];
                 }
             break;
             case T_CLASS:
@@ -510,7 +522,7 @@ class plStructureTokenparserGenerator extends plStructureGenerator
                 $params = array();
                 foreach( $function[2] as $param) 
                 {
-                    $params[] = new plPhpFunctionParameter( $param );
+                    $params[] = new plPhpFunctionParameter( $param[1], $param[0] );
                 }
                 $functions[] = new plPhpFunction( 
                     $function[0],
@@ -541,7 +553,7 @@ class plStructureTokenparserGenerator extends plStructureGenerator
                 $params = array();
                 foreach( $function[2] as $param) 
                 {
-                    $params[] = new plPhpFunctionParameter( $param );
+                    $params[] = new plPhpFunctionParameter( $param[1], $param[0] );
                 }
                 $functions[] = new plPhpFunction( 
                     $function[0],

@@ -95,6 +95,34 @@ class plGraphvizProcessor extends plProcessor
         foreach( $o->functions as $function ) 
         {
             $functions[] = $this->getModifierRepresentation( $function->modifier ) . $function->name . $this->getParamRepresentation( $function->params );
+
+            // Association creation is optional
+            if ( $this->options->createAssociations === false ) 
+            {
+                continue;
+            }
+
+            // Create association if the function is the constructor and takes
+            // other classes as parameters
+            if ( strtolower( $function->name ) === '__construct' ) 
+            {
+                foreach( $function->params as $param ) 
+                {
+                    if ( $param->type !== null && array_key_exists( $param->type, $this->structure ) && !array_key_exists( strtolower( $param->type ), $associations ) ) 
+                    {
+                        $def .= $this->createNodeRelation( 
+                            $this->getUniqueId( $this->structure[$param->type] ),
+                            $this->getUniqueId( $o ),
+                            array( 
+                                'dir'       => 'back',
+                                'arrowtail' => 'none',
+                                'style'     => 'dashed',
+                            )
+                        );
+                        $associations[strtolower( $param->type )] = true;
+                    }
+                }
+            }
         }
         
         // Create the node
@@ -213,6 +241,11 @@ class plGraphvizProcessor extends plProcessor
         $representation = '( ';
         for( $i = 0; $i<count( $params ); $i++ ) 
         {
+            if ( $params[$i]->type !== null ) 
+            {
+                $representation .= $params[$i]->type . ' ';
+            }
+
             $representation .= $params[$i]->name;
             if ( $i < count( $params ) - 1 ) 
             {
