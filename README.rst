@@ -75,13 +75,3 @@ example of how a complete phUML call could look like, this is the one used
 generate the example you can see above. ::
 
 	$ phuml -r ./ -dot -createAssociations false -neato example.png
-
-
-Where can I obtain this great stuff?
-====================================
-
-The newest version if phUML is always available from its subversion
-repository. ::
-
-	svn://svn.pureenergy.cc/phuml
-
