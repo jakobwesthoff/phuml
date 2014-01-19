@@ -1,7 +1,3 @@
-=====
-phUML
-=====
-
 .. note:: **WARNING**: This project isn't actively maintained anymore, mainly due to
     the lack of time. I migrated it to github by request. Hopefully somebody
     might find this useful as a base to work on again. Eventhough it should
@@ -9,6 +5,10 @@ phUML
     features like namespace and such. Of course Pull-Requests are always
     welcome. If somebody wants to take over maintership completely I would be
     happy to discuss that.
+
+=====
+phUML
+=====
 
 What is this all about?
 =======================
