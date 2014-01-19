@@ -26,17 +26,17 @@ specification.
 What does it look like?
 =======================
 
-.. image:: phuml_example_thumbnail.jpg
+.. image:: https://raw2.github.com/jakobwesthoff/phuml/master/images/phuml_example_thumbnail.jpg
    :alt: Class diagram of the phUML generator
    :align: center
-   :target: http://westhoffswelt.de/projects/phuml_example.png
+   :target: https://raw2.github.com/jakobwesthoff/phuml/master/images/phuml_example.png
 
 The image shown here is the class diagramm which phUML created when run on
 its own codebase. This image is hardly readable, because it has been resized
 to fit in the layout of this page. You can take a look at the complete image
 by clicking here_
 
-.. _here: http://westhoffswelt.de/projects/phuml_example.png
+.. _here: https://raw2.github.com/jakobwesthoff/phuml/master/images/phuml_example.png
 
 
 Can I use this for my own projects?
