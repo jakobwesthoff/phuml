@@ -4,7 +4,7 @@ define( "BASEDIR", dirname( __FILE__ ) . '/..' );
 
 ini_set(
     'include_path',
-    ini_get( "include_path" ) . ':' . BASEDIR
+    ini_get( "include_path" ) . PATH_SEPARATOR . BASEDIR
 );
 
 require_once( 'classes/base.php' );
